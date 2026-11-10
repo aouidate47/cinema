@@ -37,12 +37,12 @@ export default function SeatView3D({ hall, seats, seat, film, onClose, onBook }:
         <>
           <style>{`
             @keyframes explore360Hint {
-              0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(.82); filter: blur(8px); }
-              18%, 38% { opacity: .92; transform: translate(-50%, -50%) scale(1); filter: blur(0); }
-              58% { opacity: 0; transform: translate(-50%, -50%) scale(1.12); filter: blur(10px); }
+              0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(.88); filter: blur(12px); }
+              25%, 55% { opacity: .92; transform: translate(-50%, -50%) scale(1); filter: blur(0); }
+              80% { opacity: .35; transform: translate(-50%, -50%) scale(1.06); filter: blur(5px); }
             }
           `}</style>
-          <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 flex items-center gap-3 text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.8)]" style={{ animation: "explore360Hint 2s ease-in-out infinite" }}>
+          <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 flex items-center gap-3 text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.8)]" style={{ animation: "explore360Hint 5s ease-in-out infinite" }}>
             <svg viewBox="0 0 24 24" className="size-8" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 7v5h-5" />
               <path d="M20 12a8 8 0 1 0 2 5" />
