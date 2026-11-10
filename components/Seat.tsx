@@ -24,7 +24,7 @@ export default function Seat({ seat, selected, lift, onSelect }: Props) {
       aria-label={`Row ${seat.l} seat ${seat.n}, ${seat.taken ? "taken" : `${kind}, ${seat.price} DH`}`}
       onClick={() => onSelect(seat)}
       style={{ transform: `translateY(${lift.toFixed(1)}px)` }}
-      className={`size-[var(--s)] border-[1.8px] p-0 text-[10px] font-bold ${look}`}
+      className={`relative size-[var(--s)] border-[1.8px] p-0 text-[10px] font-bold after:absolute after:-inset-[2px] ${look}`}
     >
       {selected ? seat.n : null}
     </button>

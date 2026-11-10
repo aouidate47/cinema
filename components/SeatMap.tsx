@@ -7,25 +7,29 @@ type Props = { hall: Hall; seats: SeatType[]; selectedId: string | null; onSelec
 
 export default function SeatMap({ hall, seats, selectedId, onSelect }: Props) {
   const byId = new Map(seats.map((s) => [s.id, s]));
-  const total = hall.layout.reduce((a, b) => a + b, 0);
+  const maxSeats = Math.max(
+    ...hall.rows.map((_, r) => (hall.rowLayouts?.[r] ?? hall.layout).reduce((a, b) => a + b, 0))
+  );
 
   return (
     <div
       className="flex flex-1 flex-col justify-center gap-[7px] px-3"
-      style={{ "--s": "min(20px, calc((100vw - 100px) / 14))" } as React.CSSProperties}
+      style={{ "--s": `min(20px, calc((min(100vw, 440px) - 104px) / ${maxSeats}))` } as React.CSSProperties}
     >
       {hall.rows.map((l, r) => {
         let c = 0;
         let ix = 0;
+        const rowLayout = hall.rowLayouts?.[r] ?? hall.layout;
+        const total = rowLayout.reduce((a, b) => a + b, 0);
         return (
           <Fragment key={l}>
             {r === hall.balFrom && (
-              <div className="-my-0.5 text-center text-[10px] tracking-[4px] text-mute">BALCONY</div>
+              <div className="-my-0.5 text-center text-[11px] text-mute">Balcony</div>
             )}
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex items-center justify-center gap-1.5">
               <span aria-hidden className="w-3 text-[11px] font-semibold text-mute">{l}</span>
-              {hall.layout.map((n, block) => (
-                <div key={block} className="flex gap-[5px]">
+              {rowLayout.map((n, block) => (
+                <div key={block} className="flex gap-[2px]">
                   {Array.from({ length: n }, () => {
                     c++;
                     const seat = byId.get(l + c)!;

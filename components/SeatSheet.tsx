@@ -14,7 +14,7 @@ export default function SeatSheet({ seat, hall, visible, onChange, onBook }: Pro
   const fov = Math.round((2 * Math.atan(hall.screenW / 2 / seat.z) * 180) / Math.PI);
   const ox = Math.abs(seat.x);
   const centred = ox < 0.15;
-  const stat = "font-display text-3xl font-normal block";
+  const stat = "block font-display text-3xl font-normal leading-[normal]";
 
   return (
     <div
@@ -28,10 +28,10 @@ export default function SeatSheet({ seat, hall, visible, onChange, onBook }: Pro
       <div data-grab className="-mt-3 flex h-7 cursor-grab items-center justify-center">
         <span className="h-[5px] w-[46px] rounded-sm bg-mute opacity-50" />
       </div>
-      <div className="inline-block rounded-full bg-ink px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-[1.5px] text-paper">
+      <div className="inline-block rounded-full bg-ink px-2.5 py-1 text-xs font-bold text-paper">
         {kicker(seat)}
       </div>
-      <h2 className="mb-0.5 mt-2.5 font-display text-4xl font-normal">Row {seat.l}, Seat {seat.n}</h2>
+      <h2 className="mb-0.5 mt-2.5 font-display text-4xl font-normal leading-[normal]">Row {seat.l}, seat {seat.n}</h2>
       <div className="text-sm text-mute">
         {seat.bal ? "Balcony" : seat.rec ? "Recliner" : "Standard"} · {seat.price} DH
       </div>
@@ -47,8 +47,8 @@ export default function SeatSheet({ seat, hall, visible, onChange, onBook }: Pro
 
       <div className="flex items-center gap-2.5">
         <button onClick={onChange} className="px-2 py-3 font-semibold text-mute underline">Change seat</button>
-        <button onClick={onBook} className="flex-1 rounded-full bg-brand p-[17px] text-base font-extrabold uppercase tracking-wide text-white">
-          Book · {seat.price} DH
+        <button onClick={onBook} className="flex-1 rounded-full bg-brand p-[17px] text-base font-bold text-white">
+          Book seat, {seat.price} DH
         </button>
       </div>
     </div>

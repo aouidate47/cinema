@@ -48,8 +48,18 @@ export default function FilmProvider({ children }: { children: React.ReactNode }
 export function FilmButton() {
   const { pickImage } = useFilm();
   return (
-    <button onClick={pickImage} className="rounded-full border-[1.5px] border-ink px-3 py-1.5 text-xs font-extrabold tracking-[1px]">
-      🎞 Film image
+    <button
+      onClick={pickImage}
+      aria-label="Change screen image"
+      title="Change screen image"
+      className="grid size-9 place-items-center rounded-full border-[1.5px] border-line text-ink"
+    >
+      <svg viewBox="0 0 24 24" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="1.8"
+        strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+        <rect x="3" y="4" width="18" height="16" rx="3" />
+        <circle cx="9" cy="10" r="1.6" />
+        <path d="m4 18 5-5 4 4 3-3 4 4" />
+      </svg>
     </button>
   );
 }

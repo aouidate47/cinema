@@ -33,3 +33,12 @@ html, body { min-height: 100%; margin: 0; }
 body { background: var(--bg); color: var(--ink); }
 button:focus-visible, a:focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+.stage { position: relative; }
+.stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 55% at 50% 0%, color-mix(in srgb, var(--red) 14%, transparent), transparent 70%);
+  animation: fadein 1.2s ease-out;
+}

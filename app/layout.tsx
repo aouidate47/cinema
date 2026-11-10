@@ -7,7 +7,7 @@ const display = Archivo_Black({ weight: "400", subsets: ["latin"], variable: "--
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "Meridian · Seat View",
+  title: "Sightline · Seat View",
   description: "Pick your cinema seat and see the view from it.",
 };
 export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover" };

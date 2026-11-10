@@ -8,9 +8,6 @@ type RGB = [number, number, number];
 const W = 400, H = 520, F = 190, YC = H * 0.4;
 const BG: RGB = [18, 10, 12];
 const DARK: RGB = [52, 28, 22];
-const HAIR: RGB[] = [[26, 18, 16], [43, 29, 20], [58, 42, 28], [90, 70, 48], [14, 14, 18]];
-const SKIN: RGB[] = [[224, 184, 150], [198, 140, 92], [141, 90, 59], [241, 211, 184]];
-const CLOTH: RGB[] = [[59, 74, 107], [107, 59, 59], [59, 107, 79], [107, 90, 59], [74, 59, 107], [85, 85, 85], [34, 34, 40]];
 
 const col = (c: RGB, m: number, f: number) =>
   "rgb(" + c.map((v, i) => Math.round(Math.min(255, v * m) * (1 - f) + BG[i] * f)).join(",") + ")";
@@ -18,15 +15,17 @@ const col = (c: RGB, m: number, f: number) =>
 /** Draws the screen onto `ctx` and returns SVG markup for the room and the seats. */
 export function drawScene(
   hall: Hall, seats: Seat[], cam: Camera, look: number,
-  ctx: CanvasRenderingContext2D, film: HTMLCanvasElement
+  ctx: CanvasRenderingContext2D, film: HTMLCanvasElement,
+  opts: { zoom?: number; mark?: { seat: Seat; a: number; pulse: number } } = {}
 ): { room: string; seats: string } {
   const len = Math.hypot(cam.x, cam.z) || 1;
   const bx = -cam.x / len, bz = -cam.z / len, cl = Math.cos(look), sl = Math.sin(look);
   const fx = bx * cl - bz * sl, fz = bz * cl + bx * sl, rx = -fz, rz = fx;
 
+  const Fz = F * (opts.zoom ?? 1);
   const P = (x: number, y: number, z: number): V3 => {
     const dx = x - cam.x, dz = z - cam.z, d = Math.max(0.3, dx * fx + dz * fz), l = dx * rx + dz * rz;
-    return [W / 2 + (l / d) * F, YC - ((y - cam.y) / d) * F, d];
+     return [W / 2 + (l / d) * Fz, YC - ((y - cam.y) / d) * Fz, d];
   };
   const pt = (a: V3[]) => a.map((p) => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
   const dd = (p: V3) => (p[0] - cam.x) * fx + (p[2] - cam.z) * fz - 0.3;
@@ -52,7 +51,83 @@ export function drawScene(
   const ys = 0.18 / hall.rowPitch;
   const yl = (z: number) => (z - hall.firstRow) * ys;
   const yb2 = (z: number) => hall.balRise + (z - hall.balGap - hall.firstRow) * ys;
+  const entrance = seats.find((seat) => seat.id === "I20");
+  const door = entrance
+    ? (() => {
+        const x = HX - 0.02, z = entrance.z, y = entrance.y;
+        const frame = poly(
+          [[x, y, z - 0.82], [x, y + 2.35, z - 0.82], [x, y + 2.35, z + 0.82], [x, y, z + 0.82]],
+          "#a36b45"
+        );
+        const opening = poly(
+          [[x - 0.01, y + 0.08, z - 0.68], [x - 0.01, y + 2.2, z - 0.68], [x - 0.01, y + 2.2, z + 0.68], [x - 0.01, y + 0.08, z + 0.68]],
+          "#090708"
+        );
+        const panel = poly(
+          [[x - 0.02, y + 0.12, z - 0.61], [x - 0.02, y + 2.12, z - 0.61], [x - 0.02, y + 2.12, z + 0.58], [x - 0.02, y + 0.12, z + 0.58]],
+          "#492a29"
+        );
+        const knob = P(x - 0.03, y + 1.05, z - 0.43);
+        const sign = P(x - 0.03, y + 2.58, z);
+        return frame + opening + panel +
+          '<circle cx="' + knob[0].toFixed(1) + '" cy="' + knob[1].toFixed(1) + '" r="2.5" fill="#d0a45f"/>' +
+          '<text x="' + sign[0].toFixed(1) + '" y="' + sign[1].toFixed(1) +
+          '" text-anchor="middle" font-size="9" font-weight="700" font-family="Inter,system-ui,sans-serif" fill="#f4ede1">EXIT</text>';
+      })()
+    : "";
+  const stairs = [-1, 1].map((side) => {
+    const x0 = side < 0 ? -HX + 0.15 : HX - 0.85;
+    const x1 = side < 0 ? -HX + 0.85 : HX - 0.15;
+    let markup = "";
+    const step = (z0: number, z1: number, y0: number, y1: number) => {
+      if (z1 <= z0 || y1 <= y0) return;
+      markup += poly(
+        [[x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0]],
+        "#38272a"
+      );
+      markup += poly(
+        [[x0, y1, z0], [x1, y1, z0], [x1, y1, z1], [x0, y1, z1]],
+        "#594247"
+      );
+    };
 
+    const lowerRows = Math.min(hall.balFrom, hall.rows.length);
+    for (let row = 0; row < lowerRows; row++) {
+      const z0 = hall.firstRow + row * hall.rowPitch;
+      step(z0, z0 + hall.rowPitch, row * hall.rise, (row + 1) * hall.rise);
+    }
+
+    if (hasBal && hall.balFrom > 0) {
+      const lastLower = seats.find((seat) => seat.r === hall.balFrom - 1);
+      const firstBalcony = seats.find((seat) => seat.r === hall.balFrom);
+      if (lastLower && firstBalcony) {
+        const count = 8;
+        const startZ = hall.firstRow + hall.balFrom * hall.rowPitch;
+        for (let i = 0; i < count; i++) {
+          step(
+            startZ + (firstBalcony.z - startZ) * (i / count),
+            startZ + (firstBalcony.z - startZ) * ((i + 1) / count),
+            lastLower.y + (firstBalcony.y - lastLower.y) * (i / count),
+            lastLower.y + (firstBalcony.y - lastLower.y) * ((i + 1) / count)
+          );
+        }
+      }
+
+      for (let row = hall.balFrom; row < hall.rows.length; row++) {
+        const current = seats.find((seat) => seat.r === row);
+        if (!current) continue;
+        const next = seats.find((seat) => seat.r === row + 1);
+        step(
+          current.z,
+          current.z + hall.rowPitch,
+          current.y,
+          next?.y ?? current.y + hall.rise
+        );
+      }
+    }
+
+    return markup;
+  }).join("");
   const room =
     poly([[-HX, -1, -0.05], [HX, -1, -0.05], [HX, CH, -0.05], [-HX, CH, -0.05]], "#1d1013") +
     poly([[-HX, -1, 0], [-HX, -1, ZB], [-HX, CH, ZB], [-HX, CH, 0]], "#160c0e") +
@@ -61,7 +136,9 @@ export function drawScene(
     poly([[-HX, CH, 0], [HX, CH, 0], [HX, CH, ZB], [-HX, CH, ZB]], "#0c0607") +
     (hasBal ? poly([[-HX, yb2(ZL), ZL], [HX, yb2(ZL), ZL], [HX, yb2(ZB), ZB], [-HX, yb2(ZB), ZB]], "#0e0708") : "") +
     poly([[-HX, yl(0), 0], [HX, yl(0), 0], [HX, yl(ZL), ZL], [-HX, yl(ZL), ZL]], "#0f0809") +
-    (hasBal && cam.z < ZL ? poly([[-HX, yl(ZL), ZL], [HX, yl(ZL), ZL], [HX, yb2(ZL), ZL], [-HX, yb2(ZL), ZL]], "#2b161b") : "");
+    (hasBal && cam.z < ZL ? poly([[-HX, yl(ZL), ZL], [HX, yl(ZL), ZL], [HX, yb2(ZL), ZL], [-HX, yb2(ZL), ZL]], "#2b161b") : "") +
+    stairs +
+    door;
 
   // curved screen: the film image is cut into thin strips, each placed on the curve
   {
@@ -145,24 +222,11 @@ export function drawScene(
     .filter((q) => q.d > 0.7)
     .sort((a, b) => b.d - a.d)
     .forEach(({ s, d, l }) => {
-      const cx = W / 2 + (l * F) / d;
+      const cx = W / 2 + (l * Fz) / d;
       if (cx < -150 || cx > 550) return;
       const f = Math.min(0.55, Math.max(0, (d - 4) / 22));
       const B: RGB = s.rec ? [122, 63, 176] : s.bal ? [201, 154, 46] : [212, 32, 42];
       const X = s.x, Z = s.z, y = s.y;
-      const idx = s.r * 14 + s.n, px = X + ((idx % 3) - 1) * 0.03;
-
-      // people in taken seats: body + head (hair from behind, face from the front)
-      const person = () => {
-        let q = box(px - 0.23, px + 0.23, y + 0.5, y + 1.15, Z - 0.3, Z - 0.06, CLOTH[(idx * 3 + 1) % 7], f);
-        const h = P(px, y + 1.3, Z - 0.16);
-        if (h[2] > 0.31)
-          q += '<circle cx="' + h[0].toFixed(1) + '" cy="' + h[1].toFixed(1) + '" r="' + ((0.125 * F) / h[2]).toFixed(1) +
-            '" fill="' + col(cam.z < Z - 0.16 ? SKIN[idx % 4] : HAIR[idx % 5], 1, f) + '"/>';
-        return q;
-      };
-      const pr = s.taken ? person() : "";
-      const withBack = (bk: string) => (cam.z < Z ? bk + pr : pr + bk);
 
       if (d < 4.5) {
         // near seats: rounded cinema chair
@@ -176,8 +240,8 @@ export function drawScene(
             (a, b): V3 => [0, b, a], B, f) +
           ext(rr(X - 0.275, X - 0.21, y + 0.5, y + 0.64, 0.03, 0.01), zf, xs, nz, DARK, f) +
           ext(rr(X + 0.21, X + 0.275, y + 0.5, y + 0.64, 0.03, 0.01), zf, xs, nz, DARK, f) +
-          withBack(ext(rr(X - 0.25, X + 0.25, y + 0.35, y + 1.1, 0.15, 0.03),
-            (u, v, w): V3 => [u, v, w ? Z + 0.12 : Z - 0.02], xs, nz, B, f));
+          ext(rr(X - 0.25, X + 0.25, y + 0.35, y + 1.1, 0.15, 0.03),
+            (u, v, w): V3 => [u, v, w ? Z + 0.12 : Z - 0.02], xs, nz, B, f);
       } else {
         // far seats: simple blocks
         out +=
@@ -186,9 +250,30 @@ export function drawScene(
             ? box(X - 0.275, X - 0.21, y + 0.5, y + 0.64, Z - 0.46, Z + 0.04, DARK, f) +
               box(X + 0.21, X + 0.275, y + 0.5, y + 0.64, Z - 0.46, Z + 0.04, DARK, f)
             : "") +
-          withBack(box(X - 0.25, X + 0.25, y + 0.35, y + 1.1, Z - 0.02, Z + 0.12, B, f));
+          box(X - 0.25, X + 0.25, y + 0.35, y + 1.1, Z - 0.02, Z + 0.12, B, f);
       }
     });
   out += "</g>";
+    // beacon over the chosen seat during the drone descent
+  if (opts.mark && opts.mark.a > 0.01) {
+    const { seat: m, a, pulse } = opts.mark;
+    const r = 0.42 + 0.14 * pulse, cz = m.z - 0.2;
+    const base = P(m.x, m.y + 0.02, cz), top = P(m.x, m.y + 3.2, cz);
+    if (base[2] > 0.7) {
+      const ring = Array.from({ length: 28 }, (_, k) => {
+        const t = (k / 28) * Math.PI * 2;
+        return P(m.x + Math.cos(t) * r, m.y + 0.02, cz + Math.sin(t) * r);
+      });
+      out +=
+        '<g opacity="' + a.toFixed(2) + '">' +
+        '<polygon points="' + pt(ring) + '" fill="rgba(255,77,85,.3)" stroke="#FF4D55" stroke-width="2"/>' +
+        '<line x1="' + base[0].toFixed(1) + '" y1="' + base[1].toFixed(1) + '" x2="' + top[0].toFixed(1) +
+        '" y2="' + top[1].toFixed(1) + '" stroke="#FF4D55" stroke-width="1.5" stroke-dasharray="4 3"/>' +
+        '<circle cx="' + top[0].toFixed(1) + '" cy="' + top[1].toFixed(1) + '" r="13" fill="#FF4D55"/>' +
+        '<text x="' + top[0].toFixed(1) + '" y="' + (top[1] + 4).toFixed(1) +
+        '" text-anchor="middle" font-size="11" font-weight="700" font-family="Inter,system-ui,sans-serif" fill="#fff">' +
+        m.id + "</text></g>";
+    }
+  }
   return { room, seats: out };
 }

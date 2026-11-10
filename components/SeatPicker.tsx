@@ -6,18 +6,21 @@ import SeatMap from "./SeatMap";
 import TicketBar from "./TicketBar";
 import SeatView3D from "./SeatView3D";
 
-export default function SeatPicker({ hall, seats }: { hall: Hall; seats: Seat[] }) {
+type Props = { hall: Hall; seats: Seat[]; children?: React.ReactNode };
+
+export default function SeatPicker({ hall, seats, children }: Props) {
   const { film, say } = useFilm();
   const [selected, setSelected] = useState<Seat | null>(null);
   const [viewing, setViewing] = useState(false);
 
   const book = () => {
-    if (selected) say(`Booked ✓ Row ${selected.l} · Seat ${selected.n} (demo only, nothing is charged)`);
+    if (selected) say(`Booked, row ${selected.l} seat ${selected.n} (demo only, nothing is charged)`);
   };
 
   return (
     <>
       <SeatMap hall={hall} seats={seats} selectedId={selected?.id ?? null} onSelect={setSelected} />
+      {children}
       <TicketBar seat={selected} onView={() => setViewing(true)} />
       {viewing && selected && film && (
         <SeatView3D hall={hall} seats={seats} seat={selected} film={film} onClose={() => setViewing(false)} onBook={book} />

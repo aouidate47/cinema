@@ -2,6 +2,7 @@ export type Hall = {
   slug: string;
   name: string;
   layout: number[]; // seats per block, e.g. [3, 8, 3]
+  rowLayouts?: number[][];
   rows: string[];
   recFrom: number; // first recliner row index
   balFrom: number; // first balcony row index (>= rows.length means no balcony)
