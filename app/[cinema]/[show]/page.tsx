@@ -23,7 +23,7 @@ export default async function Page({ params }: { params: Promise<{ cinema: strin
   const left = Object.fromEntries(SHOWS.map((s) => [s.id, buildSeats(hall, s).filter((x) => !x.taken).length]));
 
   return (
-    <main className="mx-auto flex h-dvh max-w-[440px] flex-col overflow-hidden pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]">
+    <main className="mx-auto flex min-h-dvh max-w-[440px] flex-col pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]">
       <header className="flex items-center justify-between px-5 pt-4">
         <span className="font-display text-lg">Meridian</span>
         <div className="flex items-center gap-2">
