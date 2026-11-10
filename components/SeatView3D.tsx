@@ -47,7 +47,7 @@ export default function SeatView3D({ hall, seats, seat, film, onClose, onBook }:
               <path d="M20 7v5h-5" />
               <path d="M20 12a8 8 0 1 0 2 5" />
             </svg>
-            <span className="text-4xl font-semibold tracking-tight">360°</span>
+            <span className="text-4xl font-semibold tracking-tight text-white/50">360°</span>
           </div>
         </>
       )}
