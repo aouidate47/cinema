@@ -14,7 +14,7 @@ export default function SeatSheet({ seat, hall, visible, onChange, onBook }: Pro
   const fov = Math.round((2 * Math.atan(hall.screenW / 2 / seat.z) * 180) / Math.PI);
   const ox = Math.abs(seat.x);
   const centred = ox < 0.15;
-  const stat = "block font-display text-3xl font-normal leading-[normal]";
+  const stat = "block font-sans text-[28px] font-semibold tracking-[-0.045em] leading-tight";
 
   return (
     <div
@@ -23,32 +23,43 @@ export default function SeatSheet({ seat, hall, visible, onChange, onBook }: Pro
       aria-hidden={!visible}
       {...handlers}
       style={visible ? undefined : { transform: "translateY(120%)" }}
-      className="absolute inset-x-2.5 bottom-[calc(10px+env(safe-area-inset-bottom))] mx-auto max-w-[420px] touch-none rounded-[28px] bg-card px-5 pb-[18px] pt-5 text-ink transition-transform duration-[600ms] ease-[cubic-bezier(.2,.8,.2,1)]"
+      className="absolute inset-x-2.5 bottom-[calc(10px+env(safe-area-inset-bottom))] mx-auto max-w-[420px] touch-none rounded-[30px] border border-white/60 bg-white/90 px-5 pb-[18px] pt-4 text-[#1d1d1f] shadow-[0_18px_55px_rgba(0,0,0,0.22)] backdrop-blur-2xl transition-transform duration-[600ms] ease-[cubic-bezier(.2,.8,.2,1)] dark:border-white/10 dark:bg-[#1c1c1e]/90 dark:text-white"
     >
-      <div data-grab className="-mt-3 flex h-7 cursor-grab items-center justify-center">
-        <span className="h-[5px] w-[46px] rounded-sm bg-mute opacity-50" />
-      </div>
-      <div className="inline-block rounded-full bg-ink px-2.5 py-1 text-xs font-bold text-paper">
-        {kicker(seat)}
-      </div>
-      <h2 className="mb-0.5 mt-2.5 font-display text-4xl font-normal leading-[normal]">Row {seat.l}, seat {seat.n}</h2>
-      <div className="text-sm text-mute">
-        {seat.bal ? "Balcony" : seat.rec ? "Recliner" : "Standard"} · {seat.price} DH
+      <div data-grab className="-mt-2 flex h-6 cursor-grab items-center justify-center">
+        <span className="h-[5px] w-9 rounded-full bg-[#8e8e93]/55" />
       </div>
 
-      <div className="my-4 grid grid-cols-3 border-y border-dashed border-line">
-        <div className="py-3 pl-0"><b className={stat}>{seat.z.toFixed(1)} m</b><span className="text-xs text-mute">to screen</span></div>
-        <div className="border-l border-line py-3 pl-3"><b className={stat}>{fov}°</b><span className="text-xs text-mute">field of view</span></div>
-        <div className="border-l border-line py-3 pl-3">
-          <b className={stat}>{centred ? "0 m" : `${ox.toFixed(1)} m`}</b>
-          <span className="text-xs text-mute">{centred ? "centred" : `${seat.x < 0 ? "left" : "right"} of centre`}</span>
+      <div className="inline-flex rounded-full bg-[#f2f2f7] px-3 py-1 text-[11px] font-semibold tracking-[0.01em] text-[#636366] dark:bg-white/10 dark:text-[#d1d1d6]">
+        {kicker(seat)}
+      </div>
+      <h2 className="mb-0 mt-2.5 font-sans text-[27px] font-semibold tracking-[-0.045em] leading-tight">
+        Row {seat.l}<span className="mx-1 text-[#8e8e93]">·</span>Seat {seat.n}
+      </h2>
+      <div className="mt-1 text-[13px] font-medium text-[#8e8e93]">
+        {seat.bal ? "Balcony" : seat.rec ? "Recliner" : "Standard"} <span className="mx-1">·</span> {seat.price} DH
+      </div>
+
+      <div className="my-4 grid grid-cols-3 rounded-2xl bg-[#f2f2f7] px-1 py-3 dark:bg-white/[0.07]">
+        <div className="px-2">
+          <b className={stat}>{seat.z.toFixed(1)}<span className="ml-0.5 text-[15px] font-medium tracking-normal text-[#8e8e93]">m</span></b>
+          <span className="mt-1 block text-[11px] font-medium text-[#8e8e93]">To screen</span>
+        </div>
+        <div className="border-l border-[#d1d1d6] px-3 dark:border-white/10">
+          <b className={stat}>{fov}<span className="ml-0.5 text-[15px] font-medium tracking-normal text-[#8e8e93]">°</span></b>
+          <span className="mt-1 block text-[11px] font-medium text-[#8e8e93]">Field of view</span>
+        </div>
+        <div className="border-l border-[#d1d1d6] px-3 dark:border-white/10">
+          <b className={stat}>{centred ? "0" : ox.toFixed(1)}<span className="ml-0.5 text-[15px] font-medium tracking-normal text-[#8e8e93]">m</span></b>
+          <span className="mt-1 block text-[11px] font-medium text-[#8e8e93]">{centred ? "Centered" : seat.x < 0 ? "Left of center" : "Right of center"}</span>
         </div>
       </div>
 
-      <div className="flex items-center gap-2.5">
-        <button onClick={onChange} className="px-2 py-3 font-semibold text-mute underline">Change seat</button>
-        <button onClick={onBook} className="flex-1 rounded-full bg-brand p-[17px] text-base font-bold text-white">
-          Book seat, {seat.price} DH
+      <div className="flex items-center gap-3">
+        <button onClick={onChange} className="rounded-full px-3 py-3 text-[14px] font-semibold text-[#007aff] transition-colors hover:bg-[#007aff]/10">
+          Change seat
+        </button>
+        <button onClick={onBook} className="flex-1 rounded-full bg-[#007aff] px-4 py-[15px] text-[15px] font-semibold tracking-[-0.01em] text-white shadow-sm transition-colors hover:bg-[#006be6] active:bg-[#005ac1]">
+          Book · {seat.price} DH
         </button>
       </div>
     </div>
