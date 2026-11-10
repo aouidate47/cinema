@@ -46,6 +46,7 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.15;
       renderer.domElement.className = "absolute inset-0 h-full w-full";
+      renderer.domElement.style.touchAction = "none";
       renderer.domElement.setAttribute("aria-label", "Interactive 3D cinema auditorium");
       host.current.appendChild(renderer.domElement);
 
@@ -191,10 +192,15 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
       const screenAim = new THREE.Vector3(0, hall.screenBottom + hall.screenH * 0.58, 0.05);
       const startAt = performance.now();
       const ease = (t:number) => 1-Math.pow(1-t,3);
-      let arrived = false, yaw = 0, targetYaw = 0, dragging = false, lastX = 0;
-      const onDown = (e:PointerEvent) => { dragging=true; lastX=e.clientX; renderer!.domElement.setPointerCapture(e.pointerId); };
-      // Horizontal-only camera control; vertical pointer movement is ignored.
-      const onMove = (e:PointerEvent) => { if(!dragging)return; targetYaw += (e.clientX-lastX)*0.008; lastX=e.clientX; };
+      let arrived = false, yaw = 0, targetYaw = 0, pitch = 0, targetPitch = 0, dragging = false, lastX = 0, lastY = 0;
+      const onDown = (e:PointerEvent) => { dragging=true; lastX=e.clientX; lastY=e.clientY; renderer!.domElement.setPointerCapture(e.pointerId); };
+      // Horizontal and vertical drags rotate the seated view without moving the camera from the seat.
+      const onMove = (e:PointerEvent) => {
+        if(!dragging)return;
+        targetYaw += (e.clientX-lastX)*0.008;
+        targetPitch = THREE.MathUtils.clamp(targetPitch - (e.clientY-lastY)*0.006, -0.22, 0.22);
+        lastX=e.clientX; lastY=e.clientY;
+      };
       const onUp = () => { dragging=false; };
       renderer.domElement.addEventListener("pointerdown",onDown);
       renderer.domElement.addEventListener("pointermove",onMove);
@@ -228,13 +234,12 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
         const baseAim = screenAim.clone();
         // Drag rotates the view around the screen target without losing the screen from the initial framing.
         yaw += (targetYaw - yaw) * 0.22;
-        if (Math.abs(yaw) > 0.0001) {
-          const offset = baseAim.clone().sub(p);
-          offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
-          camera.lookAt(p.clone().add(offset));
-        } else {
-          camera.lookAt(baseAim);
-        }
+        pitch += (targetPitch - pitch) * 0.22;
+        const offset = baseAim.clone().sub(p);
+        offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+        const cameraRight = new THREE.Vector3(Math.cos(yaw), 0, -Math.sin(yaw));
+        offset.applyAxisAngle(cameraRight, pitch);
+        camera.lookAt(p.clone().add(offset));
         if(t>=1 || skipRef.current){ if(!arrived){arrived=true;onArrive();} }
         // A very subtle breathing pulse keeps the selected floor marker legible.
         if(selected) {
