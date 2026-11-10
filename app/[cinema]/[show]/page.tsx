@@ -23,49 +23,61 @@ export default async function Page({ params }: { params: Promise<{ cinema: strin
   const left = Object.fromEntries(SHOWS.map((s) => [s.id, buildSeats(hall, s).filter((x) => !x.taken).length]));
 
   return (
-    <main className="h-dvh overflow-hidden bg-[#f4f4f2] px-3 pb-3 pt-[max(10px,env(safe-area-inset-top))] text-[#202124] sm:px-6 sm:pb-5">
-      <div className="mx-auto flex h-full w-full max-w-[1180px] flex-col">
-        <header className="flex h-11 shrink-0 items-center justify-between border-b border-black/[0.08]">
-          <Link href="/" className="flex items-center gap-2.5" aria-label="Meridian home">
-            <span className="grid size-8 place-items-center rounded-lg bg-[#202124] text-white">
-              <svg viewBox="0 0 24 24" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <path d="M4 7.5h16v12H4z" /><path d="m8 7.5 2-3h4l2 3M8 12h.01M12 12h.01M16 12h.01" />
-              </svg>
-            </span>
-            <span className="font-display text-[15px] font-semibold tracking-[.07em]">MERIDIAN</span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <span className="hidden text-xs text-[#777b82] sm:inline">Choose your seat</span>
-            <FilmButton />
-          </div>
-        </header>
+    <main className="mx-auto flex h-dvh max-w-[440px] flex-col overflow-hidden pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]">
+      <header className="flex items-center justify-between px-5 pt-4">
+        <span className="font-display text-lg">Meridian</span>
+        <div className="flex items-center gap-2">
+          <nav aria-label="Hall" className="flex rounded-full border-[1.5px] border-line p-0.5">
+            {HALLS.map((h) => {
+              const on = h.slug === hall.slug;
+              return (
+                <Link
+                  key={h.slug}
+                  href={`/${h.slug}/${show.id}`}
+                  aria-current={on ? "page" : undefined}
+                  className={`rounded-full px-3 py-1 text-xs font-bold ${on ? "bg-ink text-paper" : "text-mute"}`}
+                >
+                  {h.name}
+                </Link>
+              );
+            })}
+          </nav>
+          <FilmButton />
+        </div>
+      </header>
 
-        <section className="flex shrink-0 items-center justify-between gap-3 py-3 sm:py-4">
-          <div className="min-w-0">
-            <h1 className="truncate text-[clamp(1.35rem,3vw,2rem)] font-semibold leading-tight tracking-[-.04em]">{MOVIE.title}</h1>
-            <p className="mt-1 text-[11px] text-[#777b82]">{MOVIE.genre} <span className="mx-1.5">·</span> {MOVIE.runtime}</p>
-          </div>
-          <span className="shrink-0 rounded-full bg-white px-3 py-1.5 text-[11px] font-medium text-[#555960] shadow-sm">Auditorium</span>
-        </section>
+      <section className="px-5 pb-1 pt-4">
+        <h1 className="font-display text-[34px] font-normal leading-[1.05] tracking-[-.5px]">{MOVIE.title}</h1>
+        <p className="mt-1.5 text-[13px] text-mute">
+          {MOVIE.genre}, {MOVIE.runtime}
+        </p>
+        <p className="text-[13px] text-mute">
+          {MOVIE.date} in {hall.name}
+        </p>
+      </section>
 
-        <section className="mb-3 shrink-0">
-          <div className="mb-2 flex items-center justify-between">
-            <h2 className="text-[13px] font-semibold">Showtime</h2>
-            <span className="text-[10px] text-[#858991]">Today</span>
-          </div>
-          <ShowTabs cinema={hall.slug} current={show.id} left={left} />
-        </section>
+      <ShowTabs cinema={hall.slug} current={show.id} left={left} />
 
-        <section className="min-h-0 flex-1 overflow-hidden rounded-2xl border border-black/[0.07] bg-white p-2.5 shadow-[0_5px_24px_rgba(20,20,20,.045)] sm:rounded-[22px] sm:p-4">
-          <div className="mb-1 flex items-center justify-between px-1">
-            <h2 className="text-[13px] font-semibold">Select seats</h2>
-            <span className="text-[10px] text-[#858991]">Tap to select</span>
-          </div>
-          <SeatPicker hall={hall} seats={seats}>
-            <Legend hall={hall} />
-          </SeatPicker>
-        </section>
+      <div className="stage flex min-h-0 flex-1 flex-col">
+        <div className="mx-6 mt-[18px] text-center">
+          <svg viewBox="0 0 400 34" preserveAspectRatio="none" aria-hidden
+            className="h-[34px] w-full drop-shadow-[0_6px_14px_rgba(227,27,35,.35)]">
+            <defs>
+              <linearGradient id="screenGrad" x1="0" x2="1">
+                <stop offset="0" stopColor="#E31B23" />
+                <stop offset="1" stopColor="#C99A2E" />
+              </linearGradient>
+            </defs>
+            <path d="M10 30 Q200 -8 390 30" fill="none" stroke="url(#screenGrad)" strokeWidth="4" strokeLinecap="round" />
+          </svg>
+          <span className="text-[11px] text-mute">Screen</span>
+        </div>
+
+        <SeatPicker key={`${hall.slug}-${show.id}`} hall={hall} seats={seats}>
+          <Legend hall={hall} />
+        </SeatPicker>
       </div>
+      <p className="m-0 px-4 pb-1 text-center text-[11px] text-mute">Concept demo, hall sizes are placeholders</p>
     </main>
   );
 }
