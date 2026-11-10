@@ -131,8 +131,9 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
       // two padded armrests, metal cup holders, side panels, pedestal and foot.
       const buildSeat = (s: Seat) => {
         const g = new THREE.Group(); g.position.set(s.x, s.y, s.z);
-        const fabric = s.taken ? mat("#3d3030") : s.rec ? mat("#713e88") : s.bal ? mat("#a47a35") : red;
-        const piping = s.taken ? mat("#514749") : redLight;
+        // Keep every chair in the auditorium on the same red upholstery palette, regardless of seat status.
+        const fabric = red;
+        const piping = redLight;
         const cushion = (w:number,h:number,d:number,x:number,y:number,z:number,r:number,material:ThreeTypes.Material) =>
           addBox(g,w,h,d,material,x,y,z,r);
         // Heavy upholstered side shells.
