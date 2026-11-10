@@ -191,9 +191,10 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
       const screenAim = new THREE.Vector3(0, hall.screenBottom + hall.screenH * 0.58, 0.05);
       const startAt = performance.now();
       const ease = (t:number) => 1-Math.pow(1-t,3);
-      let arrived = false, yaw = 0, dragging = false, lastX = 0, lastY = 0, pitch = 0;
-      const onDown = (e:PointerEvent) => { dragging=true; lastX=e.clientX; lastY=e.clientY; renderer!.domElement.setPointerCapture(e.pointerId); };
-      const onMove = (e:PointerEvent) => { if(!dragging)return; yaw += (e.clientX-lastX)*0.004; pitch=Math.max(-0.55,Math.min(0.45,pitch+(e.clientY-lastY)*0.003)); lastX=e.clientX; lastY=e.clientY; };
+      let arrived = false, yaw = 0, targetYaw = 0, dragging = false, lastX = 0;
+      const onDown = (e:PointerEvent) => { dragging=true; lastX=e.clientX; renderer!.domElement.setPointerCapture(e.pointerId); };
+      // Horizontal-only camera control; vertical pointer movement is ignored.
+      const onMove = (e:PointerEvent) => { if(!dragging)return; targetYaw += (e.clientX-lastX)*0.008; lastX=e.clientX; };
       const onUp = () => { dragging=false; };
       renderer.domElement.addEventListener("pointerdown",onDown);
       renderer.domElement.addEventListener("pointermove",onMove);
@@ -226,11 +227,10 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
         camera.position.copy(p);
         const baseAim = screenAim.clone();
         // Drag rotates the view around the screen target without losing the screen from the initial framing.
-        if (yaw !== 0 || pitch !== 0) {
+        yaw += (targetYaw - yaw) * 0.22;
+        if (Math.abs(yaw) > 0.0001) {
           const offset = baseAim.clone().sub(p);
-          const distance = offset.length();
           offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
-          offset.y += pitch * distance;
           camera.lookAt(p.clone().add(offset));
         } else {
           camera.lookAt(baseAim);
