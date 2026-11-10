@@ -3,9 +3,9 @@ import { SHOWS } from "@/lib/shows";
 
 type Props = { cinema: string; current: string; left?: Record<string, number> };
 
-export default function ShowTabs({ cinema, current }: Props) {
+export default function ShowTabs({ cinema, current, left }: Props) {
   return (
-    <nav className="grid grid-cols-3 gap-2" aria-label="Showtimes">
+    <nav className="flex gap-2 px-5 pt-3.5" aria-label="Showtimes">
       {SHOWS.map((s) => {
         const on = s.id === current;
         return (
@@ -13,10 +13,12 @@ export default function ShowTabs({ cinema, current }: Props) {
             key={s.id}
             href={`/${cinema}/${s.id}`}
             aria-current={on ? "page" : undefined}
-            className={`flex items-center justify-center rounded-xl border px-3 py-2.5 text-[13px] font-semibold transition-colors sm:py-3 ${on ? "border-[#24262a] bg-[#24262a] text-white" : "border-black/10 bg-white text-[#555960] hover:border-black/25"}`}
+            className={`flex-1 rounded-2xl border-[1.5px] px-3 py-2.5 ${on ? "border-ink bg-ink text-paper" : "border-line"}`}
           >
-            {s.time}
-            <span className={`ml-2 text-[9px] font-medium ${on ? "text-white/65" : "text-[#969aa1]"}`}>{s.format}</span>
+            <b className="block text-xl font-extrabold leading-tight">{s.time}</b>
+            <small className={`text-[11px] ${on ? "opacity-70" : "text-mute"}`}>
+              {s.format}{left ? `, ${left[s.id]} free` : ""}
+            </small>
           </Link>
         );
       })}
