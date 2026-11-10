@@ -183,7 +183,6 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
         }
       }
 
-      const target = new THREE.Vector3(seat.x, seat.y+0.9, seat.z-1.1);
       const start = new THREE.Vector3(seat.x*0.3, 9, maxZ+8);
       const hover = new THREE.Vector3(seat.x, seat.y+4.2, seat.z+3.6);
       // Raise the eye point above the chair back and aim directly at the screen centre.
@@ -224,7 +223,6 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
         else p=hover.clone().lerp(eye,ease((t-0.5)*2));
         if(skipRef.current) p.copy(eye);
         camera.position.copy(p);
-        const direction = new THREE.Vector3(Math.sin(yaw), pitch, -Math.cos(yaw));
         const baseAim = screenAim.clone();
         // Drag rotates the view around the screen target without losing the screen from the initial framing.
         if (yaw !== 0 || pitch !== 0) {
