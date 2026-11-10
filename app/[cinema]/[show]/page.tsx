@@ -22,7 +22,7 @@ export default async function Page({ params }: { params: Promise<{ cinema: strin
   const seats = buildSeats(hall, show);
 
   return (
-    <main className="mx-auto flex h-dvh max-w-[440px] flex-col overflow-hidden pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]">
+    <main className="mx-auto flex min-h-dvh max-w-[440px] flex-col pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]">
       <header className="flex items-end justify-between gap-2 px-5 pb-1 pt-[18px]">
         <div>
           <h1 className="font-display text-[46px] font-normal uppercase leading-none tracking-[-.5px]">Meridian</h1>

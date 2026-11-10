@@ -29,7 +29,7 @@
 
 @keyframes fadein { from { opacity: 0; } }
 
-html, body { height: 100%; margin: 0; }
-body { background: var(--bg); color: var(--ink); overflow: hidden; }
+html, body { min-height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--ink); }
 button:focus-visible, a:focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
