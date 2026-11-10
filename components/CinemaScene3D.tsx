@@ -16,8 +16,13 @@ type Props = {
 
 export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipRef, lookRef }: Props) {
   const host = useRef<HTMLDivElement>(null);
+  const previousSeatId = useRef<string | null>(null);
 
   useEffect(() => {
+    // Keep the cinematic intro for the first visit only. Seat-to-seat changes should be immediate.
+    if (previousSeatId.current && previousSeatId.current !== seat.id) skipRef.current = true;
+    previousSeatId.current = seat.id;
+
     let renderer: import("three").WebGLRenderer | undefined;
     let raf = 0;
     let disposed = false;
@@ -181,7 +186,9 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
       const target = new THREE.Vector3(seat.x, seat.y+0.9, seat.z-1.1);
       const start = new THREE.Vector3(seat.x*0.3, 9, maxZ+8);
       const hover = new THREE.Vector3(seat.x, seat.y+4.2, seat.z+3.6);
-      const eye = new THREE.Vector3(seat.x, seat.y+hall.eye, seat.z+1.5);
+      // Raise the eye point above the chair back and aim directly at the screen centre.
+      const eye = new THREE.Vector3(seat.x, seat.y + Math.max(hall.eye, 1.85), seat.z + 1.5);
+      const screenAim = new THREE.Vector3(0, hall.screenBottom + hall.screenH * 0.58, 0.05);
       const startAt = performance.now();
       const ease = (t:number) => 1-Math.pow(1-t,3);
       let arrived = false, yaw = 0, dragging = false, lastX = 0, lastY = 0, pitch = 0;
@@ -217,8 +224,18 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
         else p=hover.clone().lerp(eye,ease((t-0.5)*2));
         if(skipRef.current) p.copy(eye);
         camera.position.copy(p);
-        const direction = new THREE.Vector3(Math.sin(yaw),pitch,-Math.cos(yaw));
-        camera.lookAt(p.clone().add(direction).add(target.clone().sub(p).multiplyScalar(0.18)));
+        const direction = new THREE.Vector3(Math.sin(yaw), pitch, -Math.cos(yaw));
+        const baseAim = screenAim.clone();
+        // Drag rotates the view around the screen target without losing the screen from the initial framing.
+        if (yaw !== 0 || pitch !== 0) {
+          const offset = baseAim.clone().sub(p);
+          const distance = offset.length();
+          offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+          offset.y += pitch * distance;
+          camera.lookAt(p.clone().add(offset));
+        } else {
+          camera.lookAt(baseAim);
+        }
         if(t>=1 || skipRef.current){ if(!arrived){arrived=true;onArrive();} }
         // A very subtle breathing pulse keeps the selected floor marker legible.
         if(selected) {
