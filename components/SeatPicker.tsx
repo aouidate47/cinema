@@ -20,8 +20,8 @@ export default function SeatPicker({ hall, seats, children }: Props) {
   return (
     <>
       <SeatMap hall={hall} seats={seats} selectedId={selected?.id ?? null} onSelect={setSelected} />
-      <TicketBar seat={selected} onView={() => setViewing(true)} />
       {children && <div className="mt-5 px-1 pb-4">{children}</div>}
+      <TicketBar seat={selected} onView={() => setViewing(true)} />
       {viewing && selected && film && (
         <SeatView3D hall={hall} seats={seats} seat={selected} film={film} onClose={() => setViewing(false)} onBook={book} />
       )}
