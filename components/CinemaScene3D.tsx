@@ -45,12 +45,12 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
       host.current.appendChild(renderer.domElement);
 
       const mat = (color: string, roughness = 0.78, metalness = 0) =>
-        new ThreeTypes.MeshStandardMaterial({ color, roughness, metalness });
+        new THREE.MeshStandardMaterial({ color, roughness, metalness });
       const carpet = mat("#17151a"), wall = mat("#21191d"), wallAlt = mat("#302127");
       const black = mat("#100f13", 0.45), metal = mat("#28272a", 0.34, 0.72);
       const red = mat("#8f171d", 0.9), redLight = mat("#b52a31", 0.86);
       const redDark = mat("#5d0d13", 0.92), gold = mat("#a77d4c", 0.42, 0.55);
-      const aisleLight = new ThreeTypes.MeshStandardMaterial({ color: "#e5a76d", emissive: "#c35b25", emissiveIntensity: 1.2 });
+      const aisleLight = new THREE.MeshStandardMaterial({ color: "#e5a76d", emissive: "#c35b25", emissiveIntensity: 1.2 });
       const addBox = (parent: ThreeTypes.Object3D, w: number, h: number, d: number, material: ThreeTypes.Material,
         x: number, y: number, z: number, radius = 0.04, cast = true) => {
         const geo = new RoundedBoxGeometry(w, h, d, 3, Math.min(radius, w/3, h/3, d/3));
@@ -158,7 +158,7 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
         g.userData.seatId = s.id;
         return g;
       };
-      const seatGroups = new Map<string, THREE.Group>();
+      const seatGroups = new Map<string, ThreeTypes.Group>();
       seats.forEach(s => { const g = buildSeat(s); scene.add(g); seatGroups.set(s.id,g); });
 
       // Selected seat gets a refined illuminated floor marker.
@@ -178,10 +178,10 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
         }
       }
 
-      const target = new ThreeTypes.Vector3(seat.x, seat.y+0.9, seat.z-1.1);
-      const start = new ThreeTypes.Vector3(seat.x*0.3, 9, maxZ+8);
-      const hover = new ThreeTypes.Vector3(seat.x, seat.y+4.2, seat.z+3.6);
-      const eye = new ThreeTypes.Vector3(seat.x, seat.y+hall.eye, seat.z+1.5);
+      const target = new THREE.Vector3(seat.x, seat.y+0.9, seat.z-1.1);
+      const start = new THREE.Vector3(seat.x*0.3, 9, maxZ+8);
+      const hover = new THREE.Vector3(seat.x, seat.y+4.2, seat.z+3.6);
+      const eye = new THREE.Vector3(seat.x, seat.y+hall.eye, seat.z+1.5);
       const startAt = performance.now();
       const ease = (t:number) => 1-Math.pow(1-t,3);
       let arrived = false, yaw = 0, dragging = false, lastX = 0, lastY = 0, pitch = 0;
@@ -217,7 +217,7 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
         else p=hover.clone().lerp(eye,ease((t-0.5)*2));
         if(skipRef.current) p.copy(eye);
         camera.position.copy(p);
-        const direction = new ThreeTypes.Vector3(Math.sin(yaw),pitch,-Math.cos(yaw));
+        const direction = new THREE.Vector3(Math.sin(yaw),pitch,-Math.cos(yaw));
         camera.lookAt(p.clone().add(direction).add(target.clone().sub(p).multiplyScalar(0.18)));
         if(t>=1 || skipRef.current){ if(!arrived){arrived=true;onArrive();} }
         // A very subtle breathing pulse keeps the selected floor marker legible.
