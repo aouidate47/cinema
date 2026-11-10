@@ -7,14 +7,12 @@ type Props = { hall: Hall; seats: SeatType[]; selectedId: string | null; onSelec
 
 export default function SeatMap({ hall, seats, selectedId, onSelect }: Props) {
   const byId = new Map(seats.map((s) => [s.id, s]));
-  const maxSeats = Math.max(
-    ...hall.rows.map((_, r) => (hall.rowLayouts?.[r] ?? hall.layout).reduce((a, b) => a + b, 0))
-  );
+  const maxSeats = Math.max(...hall.rows.map((_, r) => (hall.rowLayouts?.[r] ?? hall.layout).reduce((a, b) => a + b, 0)));
 
   return (
     <div
-      className="flex w-full flex-1 flex-col justify-center gap-2.5 overflow-x-auto px-1 py-3 sm:gap-3 sm:px-2"
-      style={{ "--s": `min(27px, calc((min(100vw, 1100px) - 76px) / ${maxSeats}))` } as React.CSSProperties}
+      className="flex min-h-0 w-full flex-1 flex-col justify-center gap-[clamp(3px,.7vh,7px)] overflow-hidden px-0.5 py-1"
+      style={{ "--s": `min(23px, calc((100vw - 92px) / ${maxSeats}), calc((100dvh - 330px) / 17))` } as React.CSSProperties}
     >
       {hall.rows.map((l, r) => {
         let c = 0;
@@ -24,20 +22,18 @@ export default function SeatMap({ hall, seats, selectedId, onSelect }: Props) {
         return (
           <Fragment key={l}>
             {r === hall.balFrom && (
-              <div className="my-1 text-center text-[9px] font-bold uppercase tracking-[.22em] text-gold/75">Balcony level</div>
+              <div className="my-0.5 text-center text-[8px] font-semibold uppercase tracking-[.18em] text-[#a47b3e]">Balcony</div>
             )}
-            <div className="flex min-w-max items-center justify-center gap-2 sm:gap-3">
-              <span aria-hidden className="w-4 text-center text-[10px] font-bold text-white/30">{l}</span>
+            <div className="flex min-w-0 items-center justify-center gap-[clamp(3px,.7vw,9px)]">
+              <span aria-hidden className="w-3 shrink-0 text-center text-[8px] font-semibold text-[#9a9ea5]">{l}</span>
               {rowLayout.map((n, block) => (
-                <div key={block} className="flex gap-[3px] sm:gap-1">
+                <div key={block} className="flex gap-[2px]">
                   {Array.from({ length: n }, () => {
                     c++;
                     const seat = byId.get(l + c)!;
-                    const lift = Math.pow(ix - (total - 1) / 2, 2) * 0.18;
+                    const lift = Math.pow(ix - (total - 1) / 2, 2) * 0.12;
                     ix++;
-                    return (
-                      <Seat key={seat.id} seat={seat} lift={lift} selected={selectedId === seat.id} onSelect={onSelect} />
-                    );
+                    return <Seat key={seat.id} seat={seat} lift={lift} selected={selectedId === seat.id} onSelect={onSelect} />;
                   })}
                 </div>
               ))}
