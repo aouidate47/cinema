@@ -17,7 +17,7 @@ export default function ShowTabs({ cinema, current, left }: Props) {
           >
             <b className="block text-xl font-extrabold leading-tight">{s.time}</b>
             <small className={`text-[11px] ${on ? "opacity-70" : "text-mute"}`}>
-              {s.format}{left ? `, ${left[s.id]} free` : ""}
+              {left ? left[s.id] : ""}
             </small>
           </Link>
         );
