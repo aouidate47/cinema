@@ -1,5 +1,5 @@
-import type * as ThreeTypes from "three";
 "use client";
+import type * as ThreeTypes from "three";
 
 import { useEffect, useRef } from "react";
 import type { Hall, Seat } from "@/types";
