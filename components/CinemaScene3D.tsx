@@ -186,8 +186,8 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
 
       const start = new THREE.Vector3(seat.x*0.3, 9, maxZ+8);
       const hover = new THREE.Vector3(seat.x, seat.y+4.2, seat.z+3.6);
-      // Raise the eye point above the chair back and aim directly at the screen centre.
-      const eye = new THREE.Vector3(seat.x, seat.y + Math.max(hall.eye, 1.85), seat.z + 1.5);
+      // Put the camera at a seated viewer's head position, just in front of the backrest.
+      const eye = new THREE.Vector3(seat.x, seat.y + 1.2, seat.z + 0.02);
       const screenAim = new THREE.Vector3(0, hall.screenBottom + hall.screenH * 0.58, 0.05);
       const startAt = performance.now();
       const ease = (t:number) => 1-Math.pow(1-t,3);
