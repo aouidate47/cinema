@@ -210,7 +210,7 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
         const dy = e.clientY - lastY;
         targetYaw += dx * 0.008;
         // Finger follows the viewing direction: swipe up looks up; swipe down looks down.
-        targetPitch = THREE.MathUtils.clamp(targetPitch - dy * 0.006, -0.32, 0.32);
+        targetPitch = THREE.MathUtils.clamp(targetPitch + dy * 0.006, -0.32, 0.32);
         lastX = e.clientX;
         lastY = e.clientY;
       };
