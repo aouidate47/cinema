@@ -1,16 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  color-scheme: light dark;
-  --bg: #F4EDE1; --card: #FFFFFF; --ink: #14142B; --mute: #7A7468;
-  --red: #E31B23; --plum: #7A3FB0; --gold: #C99A2E;
-  --line: #DDD2BF; --taken: #DAD0BE; --on: #fff;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #101127; --card: #1B1D3D; --ink: #F4EDE1; --mute: #9C9AB8;
-    --red: #FF4D55; --line: #2C2F5A; --taken: #2A2D55; --on: #10112a;
-  }
+  color-scheme: dark;
+  --bg: #0b0c10;
+  --card: #15171d;
+  --ink: #f5f5f7;
+  --mute: #8d929e;
+  --red: #e31b23;
+  --plum: #9b6be8;
+  --gold: #d5ad63;
+  --line: #2a2d35;
+  --taken: #353943;
+  --on: #fff;
 }
 
 @theme inline {
@@ -27,18 +28,25 @@
   --font-sans: var(--font-inter), system-ui, sans-serif;
 }
 
-@keyframes fadein { from { opacity: 0; } }
-
 html, body { min-height: 100%; margin: 0; }
-body { background: var(--bg); color: var(--ink); }
-button:focus-visible, a:focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+html { background: var(--bg); }
+body {
+  background:
+    radial-gradient(ellipse at 50% -18%, rgba(227, 27, 35, .16), transparent 48%),
+    var(--bg);
+  color: var(--ink);
+}
+button:focus-visible, a:focus-visible {
+  outline: 2px solid #ff6970;
+  outline-offset: 3px;
+}
+button { -webkit-tap-highlight-color: transparent; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
 .stage { position: relative; }
-.stage::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(120% 55% at 50% 0%, color-mix(in srgb, var(--red) 14%, transparent), transparent 70%);
-  animation: fadein 1.2s ease-out;
+.seat-panel-glow {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(227, 27, 35, .12), transparent 58%),
+    linear-gradient(145deg, rgba(255,255,255,.035), rgba(255,255,255,.012));
 }
