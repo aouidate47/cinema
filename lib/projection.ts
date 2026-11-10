@@ -180,7 +180,7 @@ export function drawScene(
     // Every row uses the same upholstered chair model: padded back, thick seat,
     // substantial black armrests, and a dark central pedestal/base.
     const pedestal = box(X-.065,X+.065,y+.02,y+.36,Z-.28,Z-.08,DARK,f);
-    const backShell = ext(rr(X-.27,X+.27,y+.38,y+1.13,.16,.035),
+    const backShell = ext(rr(X-.27,X+.27,y+.38,y+.98,.16,.035),
       (u,v,w):V3=>[u,v,w?Z+.14:Z+.015],xs,nz,B,f);
     const seatCushion = ext(rr(Z-.51,Z+.055,y+.34,y+.53,.075,.035),
       (u,v,w):V3=>[w?X+.265:X-.265,v,u],[[0,0,-1],[0,0,1]],
