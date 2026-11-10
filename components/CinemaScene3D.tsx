@@ -51,10 +51,10 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
       const red = mat("#8f171d", 0.9), redLight = mat("#b52a31", 0.86);
       const redDark = mat("#5d0d13", 0.92), gold = mat("#a77d4c", 0.42, 0.55);
       const aisleLight = new ThreeTypes.MeshStandardMaterial({ color: "#e5a76d", emissive: "#c35b25", emissiveIntensity: 1.2 });
-      const addBox = (parent: THREE.Object3D, w: number, h: number, d: number, material: ThreeTypes.Material,
+      const addBox = (parent: ThreeTypes.Object3D, w: number, h: number, d: number, material: ThreeTypes.Material,
         x: number, y: number, z: number, radius = 0.04, cast = true) => {
         const geo = new RoundedBoxGeometry(w, h, d, 3, Math.min(radius, w/3, h/3, d/3));
-        const mesh = new ThreeTypes.Mesh(geo, material);
+        const mesh = new THREE.Mesh(geo, material);
         mesh.position.set(x, y, z); mesh.castShadow = cast; mesh.receiveShadow = true; parent.add(mesh); return mesh;
       };
 
@@ -84,12 +84,12 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
       const screenTexture = new THREE.CanvasTexture(film);
       screenTexture.colorSpace = THREE.SRGBColorSpace;
       screenTexture.minFilter = THREE.LinearFilter;
-      const screenMaterial = new ThreeTypes.MeshBasicMaterial({ map: screenTexture, side: THREE.DoubleSide });
-      const screen = new ThreeTypes.Mesh(new THREE.PlaneGeometry(hall.screenW, hall.screenH, 32, 1), screenMaterial);
+      const screenMaterial = new THREE.MeshBasicMaterial({ map: screenTexture, side: THREE.DoubleSide });
+      const screen = new THREE.Mesh(new THREE.PlaneGeometry(hall.screenW, hall.screenH, 32, 1), screenMaterial);
       screen.position.set(0, hall.screenBottom + hall.screenH/2, 0.02);
       screen.rotation.y = 0;
       // A shallow curved screen is built from a segmented surface.
-      const pos = screen.geometry.attributes.position as THREE.BufferAttribute;
+      const pos = screen.geometry.attributes.position as ThreeTypes.BufferAttribute;
       for (let i = 0; i < pos.count; i++) {
         const x = pos.getX(i);
         pos.setZ(i, hall.screenCurve * Math.pow(x/(hall.screenW/2), 2));
@@ -118,7 +118,7 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
           addBox(scene, 1.05, 0.12, hall.rowPitch, wallAlt, side * 6.2, y - 0.02, z, 0.025, false);
           addBox(scene, 0.025, 0.025, 0.82, aisleLight, side * 6.2, y + 0.055, z, 0.008, false);
         }
-        const rail = new ThreeTypes.Mesh(new THREE.CylinderGeometry(0.035,0.035,maxZ-first,12), metal);
+        const rail = new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.035,maxZ-first,12), metal);
         rail.rotation.x = Math.PI/2; rail.position.set(side*6.75,1.05,(maxZ+first)/2); scene.add(rail);
       }
 
@@ -144,16 +144,16 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
         for (const side of [-1,1]) {
           cushion(0.17,0.13,0.61,side*0.39,0.7,-0.12,0.065,black);
           cushion(0.13,0.06,0.48,side*0.39,0.77,-0.12,0.055,metal);
-          const cup = new ThreeTypes.Mesh(new THREE.CylinderGeometry(0.055,0.05,0.018,24), black);
+          const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.05,0.018,24), black);
           cup.position.set(side*0.39,0.812,-0.28); g.add(cup);
           // Visible brushed-metal foot / pedestal.
           cushion(0.12,0.3,0.12,side*0.19,0.17,0.02,0.025,metal);
         }
         cushion(0.36,0.1,0.28,0,0.06,0.04,0.025,black);
         // Seat number plaque on the back, facing the audience behind it.
-        const plaque = new ThreeTypes.Mesh(new THREE.BoxGeometry(0.2,0.07,0.012), gold);
+        const plaque = new THREE.Mesh(new THREE.BoxGeometry(0.2,0.07,0.012), gold);
         plaque.position.set(0,1.2,0.305); g.add(plaque);
-        const status = new ThreeTypes.Mesh(new THREE.BoxGeometry(0.14,0.018,0.014), s.taken ? black : aisleLight);
+        const status = new THREE.Mesh(new THREE.BoxGeometry(0.14,0.018,0.014), s.taken ? black : aisleLight);
         status.position.set(0,1.2,0.315); g.add(status);
         g.userData.seatId = s.id;
         return g;
@@ -164,7 +164,7 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
       // Selected seat gets a refined illuminated floor marker.
       const selected = seatGroups.get(seat.id);
       if (selected) {
-        const halo = new ThreeTypes.Mesh(new THREE.RingGeometry(0.38,0.49,48), new ThreeTypes.MeshBasicMaterial({color:"#ff7777",transparent:true,opacity:0.8,side:THREE.DoubleSide}));
+        const halo = new THREE.Mesh(new THREE.RingGeometry(0.38,0.49,48), new THREE.MeshBasicMaterial({color:"#ff7777",transparent:true,opacity:0.8,side:THREE.DoubleSide}));
         halo.rotation.x = -Math.PI/2; halo.position.set(seat.x,seat.y+0.02,seat.z-0.18); scene.add(halo);
       }
 
@@ -205,7 +205,7 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
         renderer?.domElement.removeEventListener("pointermove",onMove);
         renderer?.domElement.removeEventListener("pointerup",onUp);
         renderer?.domElement.removeEventListener("pointercancel",onUp);
-        scene.traverse(o=>{if(o instanceof ThreeTypes.Mesh){o.geometry.dispose();const m=o.material;if(Array.isArray(m))m.forEach(v=>v.dispose());else m.dispose();}});
+        scene.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();const m=o.material;if(Array.isArray(m))m.forEach(v=>v.dispose());else m.dispose();}});
         screenTexture.dispose();
       };
       const animate = (now:number) => {
@@ -222,7 +222,7 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
         if(t>=1 || skipRef.current){ if(!arrived){arrived=true;onArrive();} }
         // A very subtle breathing pulse keeps the selected floor marker legible.
         if(selected) {
-          const h=scene.children.find(o=>o instanceof ThreeTypes.Mesh && (o as ThreeTypes.Mesh).geometry instanceof THREE.RingGeometry) as ThreeTypes.Mesh|undefined;
+          const h=scene.children.find(o=>o instanceof THREE.Mesh && (o as ThreeTypes.Mesh).geometry instanceof THREE.RingGeometry) as ThreeTypes.Mesh|undefined;
           if(h) (h.material as ThreeTypes.MeshBasicMaterial).opacity=0.62+0.18*Math.sin(now/320);
         }
         renderer.render(scene,camera);
