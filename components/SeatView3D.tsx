@@ -32,11 +32,24 @@ export default function SeatView3D({ hall, seats, seat, film, onClose, onBook }:
           className={`${overlayBtn} right-4 top-[calc(14px+env(safe-area-inset-top))] h-11 px-5 text-sm font-semibold`}>
           Skip intro
         </button>
-      ) : (
-        <div className={`${overlayBtn} right-4 top-[calc(68px+env(safe-area-inset-top))] flex h-11 items-center gap-2 px-4 text-sm font-semibold`}>
-          <span className="size-2 rounded-full bg-emerald-400 shadow-[0_0_12px_#34d399]" />
-          Swipe or drag to look around
-        </div>
+      ) : null}
+      {!flying && (
+        <>
+          <style>{`
+            @keyframes explore360Hint {
+              0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(.82); filter: blur(8px); }
+              18%, 38% { opacity: .92; transform: translate(-50%, -50%) scale(1); filter: blur(0); }
+              58% { opacity: 0; transform: translate(-50%, -50%) scale(1.12); filter: blur(10px); }
+            }
+          `}</style>
+          <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 flex items-center gap-3 text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.8)]" style={{ animation: "explore360Hint 2s ease-in-out infinite" }}>
+            <svg viewBox="0 0 24 24" className="size-8" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 7v5h-5" />
+              <path d="M20 12a8 8 0 1 0 2 5" />
+            </svg>
+            <span className="text-4xl font-semibold tracking-tight">360°</span>
+          </div>
+        </>
       )}
       <div className="absolute left-1/2 top-[calc(16px+env(safe-area-inset-top))] -translate-x-1/2 rounded-full border border-white/10 bg-[#171317]/80 px-4 py-2 text-sm font-medium shadow-lg backdrop-blur-xl">
         <span className="mr-2 inline-block size-2 rounded-full bg-emerald-400" />
