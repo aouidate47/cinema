@@ -4,7 +4,11 @@ import type { Hall } from "@/types";
 export const HALLS: Hall[] = [
   {
     slug: "hall-3", name: "Hall 3", layout: [3, 8, 3],
-    rows: "ABCDEFGHIJK".split(""), recFrom: 7, balFrom: 9,
+    rowLayouts: [
+      [2, 8, 2], [2, 9, 2], [3, 8, 3], [3, 9, 3], [4, 8, 4],
+      [4, 9, 4], [5, 8, 5], [6, 8, 6], [6, 8, 6], [6, 8, 6], [6, 8, 6], [6, 8, 6],
+    ],
+    rows: "ABCDEFGHIJKL".split(""), recFrom: 7, balFrom: 9,
     balGap: 1.6, balRise: 1.4, balWall: 15,
     screenW: 12, screenCurve: 0.7, screenH: 5.2, screenBottom: 1.6,
     firstRow: 5, rowPitch: 1.1, seatPitch: 0.55, aisle: 1, rise: 0.18, eye: 1.15,
