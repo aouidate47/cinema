@@ -157,11 +157,6 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
           cushion(0.12,0.3,0.12,side*0.19,0.17,0.02,0.025,metal);
         }
         cushion(0.36,0.1,0.28,0,0.06,0.04,0.025,black);
-        // Seat number plaque on the back, facing the audience behind it.
-        const plaque = new THREE.Mesh(new THREE.BoxGeometry(0.2,0.07,0.012), gold);
-        plaque.position.set(0,1.2,0.305); g.add(plaque);
-        const status = new THREE.Mesh(new THREE.BoxGeometry(0.14,0.018,0.014), black);
-        status.position.set(0,1.2,0.315); g.add(status);
         g.userData.seatId = s.id;
         return g;
       };
