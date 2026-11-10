@@ -33,12 +33,12 @@ export default function SeatView3D({ hall, seats, seat, film, onClose, onBook }:
           Skip intro
         </button>
       ) : (
-        <div className={`${overlayBtn} right-4 top-[calc(14px+env(safe-area-inset-top))] flex h-11 items-center gap-2 px-4 text-sm font-semibold`}>
+        <div className={`${overlayBtn} right-4 top-[calc(68px+env(safe-area-inset-top))] flex h-11 items-center gap-2 px-4 text-sm font-semibold`}>
           <span className="size-2 rounded-full bg-emerald-400 shadow-[0_0_12px_#34d399]" />
           Drag to look around
         </div>
       )}
-      <div className="absolute left-1/2 top-[calc(16px+env(safe-area-inset-top))] -translate-x-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-[#171317]/80 px-4 py-2 text-sm font-medium shadow-lg backdrop-blur-xl">
+      <div className="absolute left-1/2 top-[calc(16px+env(safe-area-inset-top))] -translate-x-1/2 rounded-full border border-white/10 bg-[#171317]/80 px-4 py-2 text-sm font-medium shadow-lg backdrop-blur-xl">
         <span className="mr-2 inline-block size-2 rounded-full bg-emerald-400" />
         View from {seat.id}
       </div>
