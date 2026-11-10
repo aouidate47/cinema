@@ -43,7 +43,7 @@ export default function SeatView3D({ hall, seats, seat, film, onClose, onBook }:
             }
           `}</style>
           <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 flex items-center gap-3 text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.8)]" style={{ animation: "explore360Hint 5s ease-in-out infinite" }}>
-            <svg viewBox="0 0 24 24" className="size-8" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeOpacity="0.5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 7v5h-5" />
               <path d="M20 12a8 8 0 1 0 2 5" />
             </svg>
