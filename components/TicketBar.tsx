@@ -3,39 +3,21 @@ import type { Seat } from "@/types";
 
 export default function TicketBar({ seat, onView }: { seat: Seat | null; onView: () => void }) {
   return (
-    <aside className="flex flex-col justify-between rounded-[24px] border border-white/10 bg-[#111319] p-5 sm:p-6">
-      <div>
-        <div className="flex items-center justify-between">
-          <p className="text-[10px] font-bold uppercase tracking-[.2em] text-white/35">Your selection</p>
-          <span className="rounded-full border border-white/10 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wider text-white/35">Step 02</span>
-        </div>
-        <div className="mt-6">
-          <p className="text-xs text-white/40">{seat ? "Selected seat" : "No seat selected yet"}</p>
-          <h3 className="mt-1 text-[26px] font-semibold tracking-[-.045em] text-white">
-            {seat ? `Row ${seat.l} · Seat ${seat.n}` : "Choose a seat"}
-          </h3>
-          <p className="mt-2 text-[12px] text-white/45">
-            {seat ? (seat.bal ? "Balcony" : seat.rec ? "Recliner" : "Standard") + " · " + seat.price + " DH" : "Tap any available seat in the auditorium to see its details."}
-          </p>
-        </div>
+    <aside className="flex shrink-0 items-center justify-between gap-3 rounded-xl border border-black/[0.07] bg-white px-3 py-2.5 lg:flex-col lg:items-stretch lg:justify-center lg:rounded-2xl lg:px-4 lg:py-5">
+      <div className="min-w-0">
+        <p className="text-[9px] font-medium uppercase tracking-[.12em] text-[#969aa1]">Selected seat</p>
+        <p className="mt-0.5 truncate text-[13px] font-semibold text-[#24262a]">{seat ? `Row ${seat.l} · Seat ${seat.n}` : "None selected"}</p>
+        <p className="mt-0.5 text-[10px] text-[#777b82]">{seat ? (seat.bal ? "Balcony" : seat.rec ? "Recliner" : "Standard") : "Choose an available seat"}</p>
       </div>
-
-      <div className="mt-8 border-t border-white/[0.08] pt-5">
-        <div className="flex items-end justify-between">
-          <span className="text-xs font-medium text-white/45">Ticket total</span>
-          <strong className="font-display text-[32px] font-normal leading-none text-white">{seat ? `${seat.price}` : "—"}<span className="ml-1 text-sm font-sans font-medium text-white/45">DH</span></strong>
-        </div>
+      <div className="flex shrink-0 items-center gap-3 lg:flex-col lg:items-stretch">
+        <p className="text-[13px] font-semibold text-[#24262a] lg:text-right">{seat ? `${seat.price} DH` : "—"}</p>
         <button
           disabled={!seat}
           onClick={onView}
-          className={`mt-5 flex w-full items-center justify-center gap-2 rounded-full px-5 py-4 text-[13px] font-bold transition-all ${seat ? "bg-brand text-white shadow-[0_8px_24px_rgba(227,27,35,.22)] hover:bg-[#f02b33] active:scale-[.98]" : "cursor-not-allowed bg-white/[0.07] text-white/25"}`}
+          className={`rounded-lg px-4 py-2.5 text-[11px] font-semibold transition-colors ${seat ? "bg-[#24262a] text-white hover:bg-[#3a3c41]" : "cursor-not-allowed bg-[#ececeb] text-[#a5a8ad]"}`}
         >
-          Preview seat view
-          <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-            <path d="M5 12h14M13 6l6 6-6 6" />
-          </svg>
+          See seat view
         </button>
-        <p className="mt-3 text-center text-[10px] leading-relaxed text-white/25">You can explore the view before confirming your seat.</p>
       </div>
     </aside>
   );
