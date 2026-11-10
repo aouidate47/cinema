@@ -192,16 +192,33 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
       const screenAim = new THREE.Vector3(0, hall.screenBottom + hall.screenH * 0.58, 0.05);
       const startAt = performance.now();
       const ease = (t:number) => 1-Math.pow(1-t,3);
-      let arrived = false, yaw = 0, targetYaw = 0, pitch = 0, targetPitch = 0, dragging = false, lastX = 0, lastY = 0;
-      const onDown = (e:PointerEvent) => { dragging=true; lastX=e.clientX; lastY=e.clientY; renderer!.domElement.setPointerCapture(e.pointerId); };
-      // Horizontal and vertical drags rotate the seated view without moving the camera from the seat.
-      const onMove = (e:PointerEvent) => {
-        if(!dragging)return;
-        targetYaw += (e.clientX-lastX)*0.008;
-        targetPitch = THREE.MathUtils.clamp(targetPitch - (e.clientY-lastY)*0.006, -0.22, 0.22);
-        lastX=e.clientX; lastY=e.clientY;
+      let arrived = false, yaw = 0, targetYaw = 0, pitch = 0, targetPitch = 0, dragging = false, activePointer: number | null = null, lastX = 0, lastY = 0;
+      const onDown = (e:PointerEvent) => {
+        if (activePointer !== null) return;
+        e.preventDefault();
+        dragging = true;
+        activePointer = e.pointerId;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        renderer!.domElement.setPointerCapture(e.pointerId);
       };
-      const onUp = () => { dragging=false; };
+      // Track one active pointer so a vertical swipe can always reverse direction cleanly.
+      const onMove = (e:PointerEvent) => {
+        if (!dragging || e.pointerId !== activePointer) return;
+        e.preventDefault();
+        const dx = e.clientX - lastX;
+        const dy = e.clientY - lastY;
+        targetYaw += dx * 0.008;
+        // Finger follows the viewing direction: swipe up looks up; swipe down looks down.
+        targetPitch = THREE.MathUtils.clamp(targetPitch - dy * 0.006, -0.32, 0.32);
+        lastX = e.clientX;
+        lastY = e.clientY;
+      };
+      const onUp = (e:PointerEvent) => {
+        if (activePointer !== e.pointerId) return;
+        dragging = false;
+        activePointer = null;
+      };
       renderer.domElement.addEventListener("pointerdown",onDown);
       renderer.domElement.addEventListener("pointermove",onMove);
       renderer.domElement.addEventListener("pointerup",onUp);
