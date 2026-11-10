@@ -143,9 +143,9 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
         cushion(0.56,0.19,0.59,0,0.48,-0.16,0.085,fabric);
         cushion(0.52,0.12,0.12,0,0.42,-0.43,0.055,piping);
         // Tall backrest with thick shoulder wings and lumbar pad.
-        cushion(0.58,0.86,0.23,0,0.91,0.18,0.105,fabric);
-        cushion(0.48,0.42,0.09,0,0.88,0.055,0.075,piping);
-        cushion(0.42,0.16,0.09,0,1.28,0.07,0.065,fabric);
+        cushion(0.58,0.72,0.23,0,0.82,0.18,0.105,fabric);
+        cushion(0.48,0.34,0.09,0,0.82,0.055,0.075,piping);
+        cushion(0.42,0.14,0.09,0,1.1,0.07,0.065,fabric);
         // Padded arm rests and cup-holder inserts.
         for (const side of [-1,1]) {
           cushion(0.17,0.13,0.61,side*0.39,0.7,-0.12,0.065,black);
@@ -187,7 +187,7 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
       const start = new THREE.Vector3(seat.x*0.3, 9, maxZ+8);
       const hover = new THREE.Vector3(seat.x, seat.y+4.2, seat.z+3.6);
       // Put the camera at a seated viewer's head position, just in front of the backrest.
-      const eye = new THREE.Vector3(seat.x, seat.y + 1.2, seat.z + 0.02);
+      const eye = new THREE.Vector3(seat.x, seat.y + 1.2, seat.z - 0.5);
       const screenAim = new THREE.Vector3(0, hall.screenBottom + hall.screenH * 0.58, 0.05);
       const startAt = performance.now();
       const ease = (t:number) => 1-Math.pow(1-t,3);
