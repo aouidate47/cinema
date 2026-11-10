@@ -193,7 +193,7 @@ export default function CinemaScene3D({ hall, seats, seat, film, onArrive, skipR
       const ease = (t:number) => 1-Math.pow(1-t,3);
       let arrived = false, yaw = 0, dragging = false, lastX = 0, lastY = 0, pitch = 0;
       const onDown = (e:PointerEvent) => { dragging=true; lastX=e.clientX; lastY=e.clientY; renderer!.domElement.setPointerCapture(e.pointerId); };
-      const onMove = (e:PointerEvent) => { if(!dragging)return; yaw -= (e.clientX-lastX)*0.004; pitch=Math.max(-0.55,Math.min(0.45,pitch+(e.clientY-lastY)*0.003)); lastX=e.clientX; lastY=e.clientY; };
+      const onMove = (e:PointerEvent) => { if(!dragging)return; yaw += (e.clientX-lastX)*0.004; pitch=Math.max(-0.55,Math.min(0.45,pitch+(e.clientY-lastY)*0.003)); lastX=e.clientX; lastY=e.clientY; };
       const onUp = () => { dragging=false; };
       renderer.domElement.addEventListener("pointerdown",onDown);
       renderer.domElement.addEventListener("pointermove",onMove);
